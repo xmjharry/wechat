@@ -32,8 +32,12 @@ class WeChatController extends Controller
     {
         Log::info('request arrived.'); # 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
 
+        $this->createMenu();
 
         $this->app->server->push(function ($message) {
+            Log::info($message);
+            return 'hello';
+            Log::info('message is '.$message);
             $userService = $this->app->user;
             $user = $userService->get($message->FromUserName);
             switch ($message->MsgType) {
@@ -54,5 +58,98 @@ class WeChatController extends Controller
         });
 
         return $this->app->server->serve();
+    }
+
+    public function createMenu()
+    {
+        $this->menu_destroy();
+        $this->menu_add();
+    }
+
+    /**
+     * 添加菜单
+     */
+    public function menu_add()
+    {
+        $menu = $this->app->menu;
+        $buttons = [
+            [
+                "name"     => "预定民宿",
+                "type"     => "view",
+                "url"      => "http://mp.weixin.qq.com",
+            ],
+            [
+                "name"       => "美国生活",
+                "sub_button" => [
+                    [
+                        "type"     => "view",
+                        "name"     => "医生",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "医院",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "城市选择",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "美国教育",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "儿科疫苗",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                ],
+            ],
+            [
+                "name"       => "我的河马",
+                "sub_button" => [
+                    [
+                        "type"     => "view",
+                        "name"     => "赴美百科",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "夏令营",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "赴美故事",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "注册房东",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                    [
+                        "type"     => "view",
+                        "name"     => "个人中心",
+                        "url"      => "http://mp.weixin.qq.com",
+                    ],
+                ],
+            ],
+        ];
+        $menu->add($buttons);
+    }
+
+
+    /**
+     * 删除菜单
+     *
+     */
+    public function menu_destroy()
+    {
+        $menu = $this->app->menu;
+        $menu->destroy();
     }
 }
